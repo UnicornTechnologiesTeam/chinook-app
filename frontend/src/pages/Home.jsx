@@ -1,0 +1,68 @@
+import { useState, useEffect } from 'react';
+import SearchBar from '../components/SearchBar';
+import TrackCard from '../components/TrackCard';
+import PurchaseModal from '../components/PurchaseModal';
+import Alert from '../components/Alert';
+import { searchTracks } from '../services/api';
+
+function Home() {
+  const [tracks, setTracks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [selectedTrack, setSelectedTrack] = useState(null);
+
+  useEffect(() => {
+    loadTracks('');
+  }, []);
+
+  const loadTracks = async (query) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await searchTracks(query);
+      setTracks(data);
+    } catch (err) {
+      setError('Error al cargar canciones. Verifica tu conexión.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePurchaseSuccess = (invoice) => {
+    setSelectedTrack(null);
+    setSuccess(`¡Compra exitosa! Factura #${invoice.InvoiceId} — Total: $${invoice.Total}`);
+    setTimeout(() => setSuccess(null), 5000);
+  };
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px', fontFamily: 'Arial, sans-serif' }}>
+      <h1 style={{ textAlign: 'center', color: '#1db954' }}>🎵 Chinook Music Store</h1>
+      <SearchBar onSearch={loadTracks} />
+      {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
+      {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
+      {loading ? (
+        <p style={{ textAlign: 'center' }}>Cargando canciones...</p>
+      ) : (
+        <div>
+          {tracks.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#999' }}>No se encontraron canciones</p>
+          ) : (
+            tracks.map(track => (
+              <TrackCard key={track.TrackId} track={track} onBuy={setSelectedTrack} />
+            ))
+          )}
+        </div>
+      )}
+      {selectedTrack && (
+        <PurchaseModal
+          track={selectedTrack}
+          onSuccess={handlePurchaseSuccess}
+          onClose={() => setSelectedTrack(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+export default Home;
