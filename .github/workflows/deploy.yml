@@ -56,9 +56,7 @@ jobs:
             git pull origin main
             source venv/bin/activate
             pip install -r requirements.txt
-            pkill -f "uvicorn" || true
-            sleep 2
-            setsid nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 >> ~/backend.log 2>&1 < /dev/null &
+            sudo systemctl restart chinook-backend
             echo "Backend desplegado"
   deploy-frontend:
     name: Deploy Frontend
@@ -78,7 +76,5 @@ jobs:
             git pull origin main
             npm ci
             npm run build
-            pkill -f "vite" || true
-            sleep 2
-            setsid nohup npm run dev -- --host 0.0.0.0 --port 3000 >> ~/frontend.log 2>&1 < /dev/null &
+            sudo systemctl restart chinook-frontend
             echo "Frontend desplegado"
