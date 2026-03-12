@@ -8,7 +8,7 @@
 
 # 🎵 Chinook Music Store — AWS Full Stack App
 
-Aplicación web full stack desplegada en AWS Academy que permite buscar canciones y realizar compras, construida con FastAPI, React y PostgreSQL sobre una arquitectura de tres capas en la nube.
+Aplicación web full stack desplegada en AWS Academy que permite buscar canciones, agregarlas al carrito y realizar compras, construida con FastAPI, React y PostgreSQL sobre una arquitectura de tres capas en la nube.
 
 ---
 
@@ -78,7 +78,7 @@ chinook-app/
 │   │   ├── schemas.py          # Esquemas Pydantic
 │   │   └── routers/
 │   │       ├── tracks.py       # Endpoints de canciones
-│   │       ├── customers.py    # Endpoints de clientes
+│   │       ├── customers.py    # Endpoints de clientes e historial
 │   │       └── purchases.py    # Endpoints de compras
 │   ├── tests/
 │   │   ├── conftest.py
@@ -91,6 +91,8 @@ chinook-app/
     │   │   ├── SearchBar.jsx
     │   │   ├── TrackCard.jsx
     │   │   ├── PurchaseModal.jsx
+    │   │   ├── Cart.jsx
+    │   │   ├── History.jsx
     │   │   └── Alert.jsx
     │   ├── services/
     │   │   └── api.js
@@ -112,6 +114,7 @@ chinook-app/
 | GET | `/tracks/` | Listar canciones (búsqueda por `?q=`) |
 | GET | `/tracks/{id}` | Detalle de una canción |
 | GET | `/customers/` | Listar clientes |
+| GET | `/customers/{id}/history` | Historial de compras de un cliente |
 | POST | `/purchases/` | Realizar una compra |
 
 Documentación interactiva disponible en: `http://IP_BACKEND:8000/docs`
@@ -164,6 +167,19 @@ La base de datos Chinook contiene:
 
 ---
 
+## 🎨 Interfaz de Usuario
+
+La UI fue diseñada con estilo oscuro moderno inspirado en plataformas de streaming:
+
+- **Diseño oscuro** con paleta de colores roja y fondo `#121212`
+- **Búsqueda en tiempo real** por canción, artista o género
+- **Duración de canciones** mostrada en formato `mm:ss`
+- **Carrito de compras** — agrega múltiples canciones y paga todo junto
+- **Compra individual** — compra directa desde la tarjeta de canción
+- **Historial de compras** — consulta facturas anteriores por cliente
+
+---
+
 ## 🔐 Seguridad
 
 - La base de datos RDS está en una **subred privada** sin acceso público
@@ -175,4 +191,5 @@ La base de datos Chinook contiene:
 
 ## 👥 Equipo
 
-**UnicornTechnologiesTeam** — Parcial I — Computación en la Nube
+**Diego Alejandro Guevara Rodriguez** — UnicornTechnologiesTeam  
+Parcial I — Computación en la Nube
