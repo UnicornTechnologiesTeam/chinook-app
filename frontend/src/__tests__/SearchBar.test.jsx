@@ -16,7 +16,7 @@ describe('SearchBar', () => {
   test('calls onSearch when button clicked', () => {
     const mockSearch = jest.fn();
     render(<SearchBar query="" setQuery={() => {}} onSearch={mockSearch} />);
-    fireEvent.click(screen.getByText(/buscar/i));
+    fireEvent.click(screen.getByRole('button', { name: /buscar/i }));
     expect(mockSearch).toHaveBeenCalled();
   });
 });
