@@ -32,3 +32,17 @@ class CustomerBase(BaseModel):
     Email: str
     class Config:
         from_attributes = True
+class InvoiceLineDetail(BaseModel):
+    TrackId: int
+    track_name: str
+    UnitPrice: Decimal
+    class Config:
+        from_attributes = True
+
+class InvoiceDetail(BaseModel):
+    InvoiceId: int
+    InvoiceDate: datetime
+    Total: Decimal
+    lines: List[InvoiceLineDetail]
+    class Config:
+        from_attributes = True
