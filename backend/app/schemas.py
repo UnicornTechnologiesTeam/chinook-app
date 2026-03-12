@@ -10,7 +10,6 @@ class TrackDetail(BaseModel):
     artist_name: Optional[str] = None
     album_title: Optional[str] = None
     genre_name: Optional[str] = None
-    Milliseconds: Optional[int] = None
     class Config:
         from_attributes = True
 
@@ -31,20 +30,5 @@ class CustomerBase(BaseModel):
     FirstName: str
     LastName: str
     Email: str
-    class Config:
-        from_attributes = True
-
-class InvoiceLineDetail(BaseModel):
-    TrackId: int
-    track_name: str
-    UnitPrice: Decimal
-    class Config:
-        from_attributes = True
-
-class InvoiceDetail(BaseModel):
-    InvoiceId: int
-    InvoiceDate: datetime
-    Total: Decimal
-    lines: List[InvoiceLineDetail]
     class Config:
         from_attributes = True

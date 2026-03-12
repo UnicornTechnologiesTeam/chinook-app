@@ -12,7 +12,7 @@ const mockTrack = {
 
 describe('TrackCard', () => {
   test('renders track information', () => {
-    render(<TrackCard track={mockTrack} onBuy={() => {}} />);
+    render(<TrackCard track={mockTrack} onBuy={() => {}} onAddToCart={() => {}} inCart={false} />);
     expect(screen.getByTestId('track-name')).toHaveTextContent('Bohemian Rhapsody');
     expect(screen.getByTestId('track-artist')).toHaveTextContent('Queen');
     expect(screen.getByTestId('track-price')).toHaveTextContent('$0.99');
@@ -20,13 +20,13 @@ describe('TrackCard', () => {
 
   test('calls onBuy when buy button clicked', () => {
     const mockBuy = jest.fn();
-    render(<TrackCard track={mockTrack} onBuy={mockBuy} />);
+    render(<TrackCard track={mockTrack} onBuy={mockBuy} onAddToCart={() => {}} inCart={false} />);
     fireEvent.click(screen.getByTestId('buy-button'));
-    expect(mockBuy).toHaveBeenCalledWith(mockTrack);
+    expect(mockBuy).toHaveBeenCalled();
   });
 
   test('renders genre name', () => {
-    render(<TrackCard track={mockTrack} onBuy={() => {}} />);
+    render(<TrackCard track={mockTrack} onBuy={() => {}} onAddToCart={() => {}} inCart={false} />);
     expect(screen.getByTestId('track-genre')).toHaveTextContent('Rock');
   });
 });

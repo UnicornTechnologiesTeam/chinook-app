@@ -1,59 +1,45 @@
-import { useState, useEffect } from 'react';
-import { getCustomers, createPurchase } from '../services/api';
-
-function PurchaseModal({ track, onSuccess, onClose }) {
-  const [customers, setCustomers] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    getCustomers().then(setCustomers).catch(() => setError('Error cargando clientes'));
-  }, []);
-
-  const handleBuy = async () => {
-    if (!selectedCustomer) {
-      setError('Selecciona un cliente');
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const invoice = await createPurchase(Number(selectedCustomer), [track.TrackId]);
-      onSuccess(invoice);
-    } catch (err) {
-      setError('Error al procesar la compra');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+import { useState } from 'react'
+function PurchaseModal({ track, customers, onConfirm, onCancel }) {
+  const [selectedCustomer, setSelectedCustomer] = useState('')
+  
   return (
     <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      position: 'fixed', inset: 0,
+      background: 'rgba(0,0,0,0.8)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 1000
+      zIndex: 1000,
     }}>
       <div style={{
-        backgroundColor: 'white', borderRadius: '12px',
-        padding: '32px', width: '400px', maxWidth: '90%'
+        background: '#282828',
+        borderRadius: '12px',
+        padding: '32px',
+        width: '480px',
+        maxWidth: '90vw',
       }}>
-        <h2 style={{ marginTop: 0 }}>Comprar canción</h2>
-        <p><strong>{track.Name}</strong> — {track.artist_name}</p>
-        <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#1db954' }}>
-          ${Number(track.UnitPrice).toFixed(2)}
+        <h2 style={{ color: '#fff', marginBottom: '8px' }}>Confirmar compra</h2>
+        <p style={{ color: '#b3b3b3', marginBottom: '24px', fontSize: '14px' }}>
+          🎵 {track?.Name} — <span style={{ color: '#e8192c' }}>${track?.UnitPrice}</span>
         </p>
 
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-          Selecciona cliente:
+        <label style={{ color: '#b3b3b3', fontSize: '13px', display: 'block', marginBottom: '8px' }}>
+          Selecciona tu cuenta
         </label>
         <select
           value={selectedCustomer}
-          onChange={(e) => setSelectedCustomer(e.target.value)}
-          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '16px', fontSize: '14px' }}
+          onChange={e => setSelectedCustomer(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            borderRadius: '6px',
+            background: '#3e3e3e',
+            color: '#fff',
+            border: 'none',
+            fontSize: '14px',
+            marginBottom: '24px',
+            outline: 'none',
+          }}
         >
-          <option value="">-- Seleccionar --</option>
+          <option value="">-- Seleccionar cliente --</option>
           {customers.map(c => (
             <option key={c.CustomerId} value={c.CustomerId}>
               {c.FirstName} {c.LastName} ({c.Email})
@@ -61,26 +47,32 @@ function PurchaseModal({ track, onSuccess, onClose }) {
           ))}
         </select>
 
-        {error && <p style={{ color: 'red', marginBottom: '12px' }}>{error}</p>}
-
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+          <button onClick={onCancel} style={{
+            padding: '10px 24px',
+            borderRadius: '20px',
+            border: '1px solid #535353',
+            background: 'transparent',
+            color: '#fff',
+            cursor: 'pointer',
+            fontSize: '14px',
+          }}>Cancelar</button>
           <button
-            onClick={handleBuy}
-            disabled={loading}
-            style={{ flex: 1, padding: '12px', backgroundColor: '#1db954', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px' }}
-          >
-            {loading ? 'Procesando...' : 'Confirmar compra'}
-          </button>
-          <button
-            onClick={onClose}
-            style={{ flex: 1, padding: '12px', backgroundColor: '#ccc', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px' }}
-          >
-            Cancelar
-          </button>
+            onClick={() => selectedCustomer && onConfirm(selectedCustomer)}
+            style={{
+              padding: '10px 24px',
+              borderRadius: '20px',
+              border: 'none',
+              background: selectedCustomer ? '#e8192c' : '#535353',
+              color: '#000',
+              fontWeight: '700',
+              cursor: selectedCustomer ? 'pointer' : 'not-allowed',
+              fontSize: '14px',
+            }}>Comprar</button>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default PurchaseModal;
+export default PurchaseModal
