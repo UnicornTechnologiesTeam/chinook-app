@@ -1,34 +1,57 @@
-function TrackCard({ track, onBuy }) {
-  return (
-    <div data-testid="track-card" style={{
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      padding: '16px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '12px',
-      backgroundColor: '#fff'
-    }}>
-      <div>
-        <h3 data-testid="track-name" style={{ margin: '0 0 4px 0' }}>{track.Name}</h3>
-        <p data-testid="track-artist" style={{ margin: '0 0 2px 0', color: '#666' }}>{track.artist_name}</p>
-        <p data-testid="track-genre" style={{ margin: 0, color: '#999', fontSize: '14px' }}>{track.genre_name}</p>
-      </div>
-      <div style={{ textAlign: 'right' }}>
-        <p data-testid="track-price" style={{ fontWeight: 'bold', fontSize: '18px', margin: '0 0 8px 0' }}>
-          ${Number(track.UnitPrice).toFixed(2)}
-        </p>
-        <button
-          onClick={() => onBuy(track)}
-          data-testid="buy-button"
-          style={{ padding: '8px 16px', backgroundColor: '#1db954', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-        >
-          Comprar
-        </button>
-      </div>
-    </div>
-  );
+function formatDuration(ms) {
+  const min = Math.floor(ms / 60000)
+  const sec = Math.floor((ms % 60000) / 1000)
+  return `${min}:${sec.toString().padStart(2, '0')}`
 }
 
-export default TrackCard;
+function TrackCard({ track, onBuy, onAddToCart, inCart }) {
+  return (
+    <div data-testid="track-card" style={{
+      display: 'flex', alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '12px 16px', borderRadius: '6px',
+      transition: 'background 0.2s',
+    }}
+    onMouseEnter={e => e.currentTarget.style.background = '#1a1a1a'}
+    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{
+          width: '48px', height: '48px', background: '#282828',
+          borderRadius: '4px', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', fontSize: '20px'
+        }}>🎵</div>
+        <div>
+          <div data-testid="track-name" style={{ fontWeight: '600', fontSize: '15px', color: '#fff' }}>{track.Name}</div>
+          <div data-testid="track-artist" style={{ fontSize: '13px', color: '#b3b3b3', marginTop: '2px' }}>
+            {track.artist_name} · {track.album_title}
+          </div>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '2px' }}>
+            <span data-testid="track-genre" style={{ fontSize: '12px', color: '#535353' }}>{track.genre_name}</span>
+            {track.Milliseconds && (
+              <span style={{ fontSize: '12px', color: '#535353' }}>⏱ {formatDuration(track.Milliseconds)}</span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span data-testid="track-price" style={{ color: '#b3b3b3', fontSize: '14px' }}>${track.UnitPrice}</span>
+        <button onClick={() => onAddToCart(track)} style={{
+          background: inCart ? '#535353' : '#282828',
+          color: inCart ? '#b3b3b3' : '#fff',
+          border: `1px solid ${inCart ? '#535353' : '#e8192c'}`,
+          borderRadius: '20px', padding: '7px 16px', fontSize: '13px',
+          cursor: inCart ? 'default' : 'pointer',
+        }}>
+          {inCart ? '✓ En carrito' : '+ Carrito'}
+        </button>
+        <button data-testid="buy-button" onClick={() => onBuy(track)} style={{
+          background: '#e8192c', color: '#fff', border: 'none',
+          borderRadius: '20px', padding: '8px 20px',
+          fontWeight: '700', fontSize: '13px', cursor: 'pointer',
+        }}>Comprar</button>
+      </div>
+    </div>
+  )
+}
+export default TrackCard
