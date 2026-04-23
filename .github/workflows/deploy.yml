@@ -16,7 +16,7 @@ jobs:
         working-directory: ./backend
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv pydantic pytest pytest-cov httpx
       - name: Run backend tests
         working-directory: ./backend
         env:
@@ -52,10 +52,10 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/environment/backend
+            cd ~/environment/chinook-app
             git pull origin main
-            source venv/bin/activate
-            pip install -r requirements.txt
+            source ~/environment/chinook-app/backend/venv/bin/activate
+            pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv pydantic pytest pytest-cov httpx
             sudo systemctl restart chinook-backend
             echo "Backend desplegado"
   deploy-frontend:
@@ -70,11 +70,13 @@ jobs:
         with:
           host: ${{ secrets.EC2_FRONTEND_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.EC2_FRONTEND_SSH_KEY }}
           script: |
-            cd ~/environment/frontend
+            cd ~/environment/chinook-app
             git pull origin main
+            cd frontend
             npm ci
             npm run build
-            sudo systemctl restart chinook-frontend
+            sudo cp -r dist/* /usr/share/nginx/html/
+            sudo systemctl restart nginx
             echo "Frontend desplegado"
